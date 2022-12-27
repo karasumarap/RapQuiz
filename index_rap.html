@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+</head>
+<body>
+    <div id="app" class="container">
+        <div class="title">
+            <h1>ラップクイズ</h1>
+            <div class="marker"></div>
+           
+        </div>
+        <button v-if="startFlg!=true" class="startButton mb-20" @click="gameStart">Start</button>
+        <div v-if="startFlg==true">
+            <div class="question mb-20">{{current_question}}</div>
+            <div v-if="current_question_counts==question_counts" class="clear">おめでとう!あなたも今日からラップ大好きだね！</div>
+            <div class="typeFormWrapper mb-20">
+                <input id="typeForm" v-model="typebox" type="text" class="typeForm">
+            </div>
+
+            <div class="gaugeWrapper">
+                <div v-bind:style="styleobject" class="gauge"></div>
+            </div>
+            <div>{{this.current_question_counts}}/{{question_counts}}</div>
+        </div>
+
+        <script>
+            new Vue({
+                el:"#app" ,
+                data:{
+                    startFlg:"",
+                    current_question:"",
+                    questions:[
+                        'R-指定,DJ-松永で構成されるユニットの名前は？(大文字始まり　スペース有）',
+                        '○○を踏むのがラップです。○○とは？（漢字）',
+                        'ラップを英語で書いてください（アルファベット小文字で3文字）',
+                        'ヒップホップを英語で書いてください（アルファベット小文字で6文字）',
+                        'ラップ大好きと入力してください'
+                    ],
+                    answers:[
+                        'Creepy Nut',
+                        '韻',
+                        'rap',
+                        'hiphop',
+                        'ラップ大好き'
+                    ],
+                    typebox:"",
+                    current_question_counts:0,
+                    question_counts:0
+                },
+                computed:{
+                    styleobject:function(){
+                        width = 20 * this.current_question_counts + "%"
+                        if(this.current_question_counts==5){
+                            color="pink"
+                        }else{
+                            color="orange"
+                        }
+                        return{
+                            'width':width,
+                            'background-color':color
+                        }
+                    }
+                },
+
+                methods:{
+                    gameStart:function(){
+                        this.startFlg=true;
+                        this.$nextTick(function(){
+                            document.getElementById('typeForm').focus()
+                        })
+                    }
+                },
+                mounted:function(){
+                    this.current_question=this.questions[0]
+                    this.question_counts=this.questions.length
+                },
+
+                watch:{
+                    typebox:function(e){
+                        if(e== this.answers[0]){
+                            this.questions.splice(0,1)
+                            this.answers.splice(0,1)
+                            this.current_question=this.questions[0]
+                            this.typebox=""
+                            this.current_question_counts=this.current_question_counts+1
+                        }
+                    }
+                }
+            })
+        </script>
+        
+        
+    </div>
+</body>
+</html>
